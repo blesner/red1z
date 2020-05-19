@@ -17,7 +17,7 @@ This project has *no* external dependencies. And so far is supported on Linux wi
 * Low overhead: avoid copying data around, uses POSIX `writev()` for pipelining.
 
 ## Command Support
-Most of REDIS 5 commands are supported expect for some informational commands, `Server`, `HyperLogLog`, `Geo`, `Scripting` commands are also missing. There is some basic support of `Pub/Sub` but I've yet to come with a satisfying API design.
+Most of REDIS 5 commands are supported expect for some informational commands, `Server`, `Geo`, `Scripting` commands are also missing. There is some basic support of `Pub/Sub` but I've yet to come with a satisfying API design.
 
 ## Thread Safety
 IMHO **every** project should cleary state their thread-safety properties, so here you are:
