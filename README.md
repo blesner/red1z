@@ -1,7 +1,7 @@
 # red1z
 A c++17 REDIS client. 
 
-## about
+## About
 
 The name comes from the `c++1z` used by compilers before they had full C++17 support. 
 I know there are many Redis clients out there, but I just wanted to write my own. First to get used to some of C++17 features and then (and  mostly) as an API design experiment.
@@ -23,6 +23,10 @@ Most of REDIS 5 commands are supported expect for some informational commands, `
 IMHO **every** project should cleary state their thread-safety properties, so here you are:
 
 **`red1z` is not thread-safe**
+
+## Building & Installing
+`red1z` uses CMake, juist create a `build` directory run `cmake` from it then run `make` and `make install`.
+Link using `-lred1z`.
 
 ## Error Reporting
 `red1z` uses exceptions, and all derive from `red1z::Error` which in turns derives from `std::runtime_error`.
