@@ -362,7 +362,12 @@ namespace red1z {
         using U = remove_optional_t<O>;
         auto elements = std::move(r).array();
         for (auto& rr : elements) {
-          *out++ = std::move(rr).opt<U>();
+          if (rr) {
+            *out++ = std::move(rr).get<U>();
+          }
+          else {
+            *out++ = std::nullopt;
+          }
         }
         return elements.size();
       }
@@ -392,7 +397,15 @@ namespace red1z {
     private:
       template <std::size_t... I>
       static result_type pack(std::vector<Reply>& elements, std::index_sequence<I...>) {
-        return std::make_tuple(std::move(elements[I]).opt<nth_element<I, Ts...>>()...);
+        return {get_opt<nth_element<I, Ts...>>(elements[I])...};
+      }
+
+      template <class T>
+      static std::optional<T> get_opt(Reply& r) {
+        if (!r) {
+          return std::nullopt;
+        }
+        return std::move(r).get<T>();
       }
     };
 

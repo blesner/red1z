@@ -67,14 +67,6 @@ namespace red1z {
       return io<T>::read(std::move(*this).string());
     }
 
-    template <class T>
-    std::optional<T> opt() && {
-      if (!*this) {
-        return std::nullopt;
-      }
-      return std::move(*this).get<T>();
-    }
-
     bool ok() const {
       if (!*this) {
         return false;
