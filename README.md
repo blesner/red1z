@@ -76,12 +76,12 @@ r[&d].get<int>("key1"); //OK: read the data as an int then ASSIGN it to d
 //OUTPUT ITERATOR VARIANT
 std::vector<std::optional<int>> vi;
 //read key1 and key2 as ints and store them into vi
-auto const n = r[std::back_inserter(vi)].mget("key1", "key2);
+auto const n = r[std::back_inserter(vi)].mget("key1", "key2");
 //n is the number of elements written (here 2)
 
 std::vector<std::optional<double>> vd;
 //read key1 and key2 as ints and store them as double into vd
-r[std::back_inserter(vec)].mget<int>("key1", "key2);
+r[std::back_inserter(vec)].mget<int>("key1", "key2");
 
 ```
 
