@@ -40,7 +40,7 @@ namespace red1z {
     };
   }
 
-  inline static impl::Passtrough commands;
+  extern impl::Passtrough commands;
 
   template <class T=std::string>
   class Message {
@@ -77,10 +77,15 @@ namespace red1z {
   {
     impl::Context m_ctx;
   public:
-    Redis(std::string const& ip, std::string const& password, int port = 6379) :
-      m_ctx(ip, port, password)
-    {
-    }
+    Redis(std::string const& hostname, int port = 6379, int db = 0,
+          std::optional<std::string> pass = std::nullopt,
+          std::optional<std::string> user = std::nullopt);
+
+    Redis(std::string const& hostname, std::string const& password, int db = 0) :
+      Redis(hostname, 6379, db, password)
+    {}
+
+    static Redis from_url(std::string_view url);
 
     template <class Cmd>
     auto _run(impl::Command<Cmd>&& cmd) {
@@ -240,7 +245,6 @@ namespace red1z {
       else {
         auto ch = std::move(reply[1]).string();
         auto n = reply[2].integer();
-        std::cout << "META MESSAGE: " << type << ", " << ch<< " ("<< n<< ')' <<'\n';
       }
       return std::nullopt;
     }

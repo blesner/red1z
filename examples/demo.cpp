@@ -77,7 +77,7 @@ namespace red1z {
 }
 
 int main(int, char**) {
-  red1z::Redis ctx("localhost", "password");
+  auto ctx = red1z::Redis::from_url("redis://password@localhost/0");
   namespace f = red1z::flags;
   auto& cmd = red1z::commands;
 

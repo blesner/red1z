@@ -12,7 +12,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 set(SRC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-add_library(red1z ${SRC}/reply.cpp ${SRC}/socket.cpp)
+add_library(red1z ${SRC}/reply.cpp ${SRC}/socket.cpp ${SRC}/redis.cpp)
 
 
 add_executable(demo examples/demo.cpp)

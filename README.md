@@ -1,9 +1,9 @@
 # red1z
-A c++17 REDIS client. 
+A c++17 REDIS client.
 
 ## about
 
-The name comes from the `c++1z` used by compilers before they had full C++17 support. 
+The name comes from the `c++1z` used by compilers before they had full C++17 support.
 I know there are many Redis clients out there, but I just wanted to write my own. First to get used to some of C++17 features and then (and  mostly) as an API design experiment.
 
 
@@ -28,7 +28,7 @@ IMHO **every** project should cleary state their thread-safety properties, so he
 `red1z` uses exceptions, and all derive from `red1z::Error` which in turns derives from `std::runtime_error`.
 
 ## Quickstart
-Here is a simple exemple of how `red1z` handles input and ouput. The idea is to be able to use any type (under conditions, discussed later) as Redis values **and** keys, and have a strongly typed C++ API on top. In a nutshell, every value returned as a `SimpleString` or `BulkString`, can be interpreted with a type. 
+Here is a simple exemple of how `red1z` handles input and ouput. The idea is to be able to use any type (under conditions, discussed later) as Redis values **and** keys, and have a strongly typed C++ API on top. In a nutshell, every value returned as a `SimpleString` or `BulkString`, can be interpreted with a type.
 
 The entrypoint of `red1z` is the `red1z::Redis` class, each (except for transactions) redis command has a corresponding method (lowercased) on `red1z::Redis`
 
@@ -39,7 +39,7 @@ Commands come in two forms: the *direct* form and the *bound* form:
 ### Direct form
 In the *direct* form the commands returns directy its value. The direct form accepts an optional type paremeter for the returned value (possibly wrapped in `std::optional`)
 ```c++
-red1z::Redis r("hostname", "password");
+auto r = red1z::Redis::from_url("redis://password@hostname");
 auto v = r.get("my key"); //v is std::optional<std::string>
 auto i = r.get<int>("key"); //i is std::optional<int>
 
@@ -88,29 +88,29 @@ r[std::back_inserter(vec)].mget<int>("key1", "key2);
 #include "red1z/red1z.h"
 
 int main(int, char**) {
-  red1z::Redis r("hostname", "password");
+  auto r = red1z::Redis::from_url("redis://password@hostname");
   r.set("my_key", "value");
   if (auto v = r.get("my_key")) {
     // here v is std::optional<std::string> (the default value type is std::string in red1z)
     std::cout << "got value: " << *v << '\n';
   }
-  
+
   r.set("number", 42); //where the BINARY value of the int 42 will be stored;
   if (auto v = r.get<int>("number")) {
     //*v is an int with value 42
   }
-  
+
   //variadic commands are supported
   r.mset("key1", 10, "key2", 20, "key3", "foo");
-  
+
   //when you don't kown in advance the number of arguments use unpack():
   std::vector<std::tuple<std::string, int>> kv = {{"key1", 10}, {key2, 20}};
   r.mset("key3", "bar", red1z::unpack(kv), "you can mix arguments", "with uses of unpack()");
   //unpack() takes any container whose value type T has the 'tuple protocol'
-  //with std::tuple_size_v<T> == 2; i.e. std::tuple<K, V>, std::array<T, 2>, std::pair<K, V>, 
+  //with std::tuple_size_v<T> == 2; i.e. std::tuple<K, V>, std::array<T, 2>, std::pair<K, V>,
   //or anything that has the proper specializations for std::get and std::tuple_size
   //the is also an overload of unpack() taking a interator pair
-  
+
   if (auto v = r.get<std::array<int,1>>("number")) {
     //also works out-of-the box since an std::array of 1 int has the same binary representation as one int alone
     //(*v)[0] is an int with value 42
@@ -119,7 +119,7 @@ int main(int, char**) {
     //also works, the 4 bytes of your in will just be split into 2 shorts
   }
   if (auto v = r.get<std::vector<int>>("number")) {
-    //when using get<std::vector<T>> the result with be a vector with as many T's as possible 
+    //when using get<std::vector<T>> the result with be a vector with as many T's as possible
     //(if there is some data left in the value, or not enough data this is an error)
   }
   //output parameters are sypported with a different syntax:
@@ -133,17 +133,17 @@ int main(int, char**) {
   else {
     //no value returned form get()
   }
-    
+
   //generally valriadic commands return tuples : here std::tuple<std::optioanl<int>, std::optional<std::string>>
-  auto const [n, str] = r.mget<int, std::string>("key1", "key3"); 
-  
+  auto const [n, str] = r.mget<int, std::string>("key1", "key3");
+
   //some arguments may change the return type, e.g. when using unpack
   //we don't know in advance the number of returned values:
   std::vector<std::string> args = {"key1", "key2"};
-  std::vector<std::optional<int>> res = r.mget<int>(red1z::unpack(args)); 
+  std::vector<std::optional<int>> res = r.mget<int>(red1z::unpack(args));
   //the (optional) type parameter must be valid for all values returned (the default of std::string always works).
-  
-  
+
+
 }
 ```
 
@@ -176,19 +176,19 @@ When you know exactly at compile-time the commands you want in a transaction the
 
 ```c++
 auto& cmd = red1z::commands; //red1z::command is an object with all redis commands as methods but do not execute anyting.
-red1z::Redis r("hostname", "password");
+auto r = red1z::Redis::from_url("redis://password@hostname");
 
 //STATIC transaction: notice the use of methods on 'cmd' as arguments:
 int v;
 auto const [r1, r2, r3] = r.transaction(cmd.get<int>("key1"), cmd.set("K", "bar"), cmd[&v].get("key2"));
-//r1 is std::optional<int>, r2 is bool, r3 is bool 
+//r1 is std::optional<int>, r2 is bool, r3 is bool
 ```
 
 ### Dynamic transaction
 When you don't know in advance the number of commands in your transaction use the static form of `red1z::Redis::transaction()` which return a *transaction object* with all the redis commands as methods.
 The `transaction<T>()` method takes an optional type parameter `T` defaulted to `std::any` to hold the results of the individual commands. The free functions `red1z::opt<T>(std::any const&)` and `red1z::get<T>(std::any const&)` are provided to easily access the value held in an `std::any` instance, by performing `std::any_cast<std::optional<T>>()` and `std::any_cast<T>()`, respectively. If the result of all the commands in the transaction can be held in a single type `T` you can use an explict type argument here.
 
-The transaction must be explicitely executed by calling `execute()` which returns an `std::vector<T>`, 
+The transaction must be explicitely executed by calling `execute()` which returns an `std::vector<T>`,
 or conversely it can be cancelled by calling `discard()`.
 
 ```c++
@@ -251,7 +251,7 @@ namespace red1z {
       //just make sure that you instance lifetime extends after the command, or the execute() call
       //in the case of a transaction or pipeline otherwise things will get very, very nasty.
     }
-    
+
     static CustomType read(std::string_view data) {
       //deserialize your object here, red1z assumes that all the contents of data will be consumed
     }

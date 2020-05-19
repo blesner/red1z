@@ -27,13 +27,9 @@ namespace red1z {
       std::vector<std::string> m_queue;
       friend class CommandQueue;
     public:
-      Context(std::string const& host, int port, std::string_view password) :
+      Context(std::string const& host, int port) :
         m_sock(host, port)
-      {
-        if (password.size()) {
-          run("AUTH", password);
-        }
-      }
+      { }
 
       int in_flight() const {
         return m_in_flight;
