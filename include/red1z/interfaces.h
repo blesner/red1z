@@ -8,6 +8,7 @@
 #include "red1z/commands/hash.h"
 #include "red1z/commands/set.h"
 #include "red1z/commands/sorted_set.h"
+#include "red1z/commands/hyperloglog.h"
 
 
 namespace red1z {
@@ -19,7 +20,8 @@ namespace red1z {
       ListCommands<Executor>,
       HashCommands<Executor>,
       SetCommands<Executor>,
-      SortedSetCommands<Executor>
+      SortedSetCommands<Executor>,
+      HyperLogLogCommands<Executor>
     {};
 
     template <class Executor, class T>
