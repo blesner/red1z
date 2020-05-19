@@ -5,25 +5,6 @@ using red1z::Error;
 
 #include <iostream>
 
-static std::string _read_line_(red1z::impl::Socket& sock) {
-  std::string line;
-  std::array<char, 2> c;
-  for (;;) {
-    sock.read(c);
-    if (c[0] == '\r') {
-      break;
-    }
-    if (c[1] == '\r') {
-      line.push_back(c[0]);
-      sock.read(c[1]); //read '\n'
-      //c[1] MUST be '\n'
-      break;
-    }
-    line.append(c.data(), 2);
-  }
-  return line;
-}
-
 static std::string _read_line(red1z::impl::Socket& sock) {
   std::string line;
   std::array<char, 2> c;
