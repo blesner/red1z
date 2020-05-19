@@ -23,7 +23,7 @@ namespace red1z {
 
       template <class Kdst, class Ksrc, class... Ksrcs>
       decltype(auto) pfmerge(Kdst const& dst, Ksrc const& src, Ksrcs const&... srcs) {
-        return run(StatusCommand("PFCOUNT", dst, src, srcs...));
+        return run(StatusCommand("PFMERGE", dst, src, srcs...));
       }
     };
   }
