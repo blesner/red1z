@@ -33,7 +33,7 @@ Here is a simple exemple of how `red1z` handles input and ouput. The idea is to 
 The entrypoint of `red1z` is the `red1z::Redis` class, each (except for transactions) redis command has a corresponding method (lowercased) on `red1z::Redis`
 
 You can specify the result type for every command (where relevant) as a template parameter `T` or just use the default of `std::string`.
-If the command may return no value (like `get`) the returned type is `std::optional<T>`.
+If the command may return no value (like `get<T>`) the returned type is `std::optional<T>`.
 
 Commands come in two forms: the *direct* form and the *bound* form:
 ### Direct form
@@ -147,12 +147,12 @@ int main(int, char**) {
 }
 ```
 
-## passing flags
+## Passing Flags
 The flags are explicit and do not introduce new methods they are juste passed as arguments to redis commands. The flags are functions living in the namespace `red1z::flags`. The returned type may differ depending on the passed flags.
 
 ```c++
 namespace flg = rd1z::flags;
-r.set("key", 42, flg::ex(10)); //set the EF (expire) flag in 10 seconds
+r.set("key", 42, flg::ex(10)); //set the EX (expire) flag in 10 seconds
 
 r.zrange("sorted-set", 0, -1) //returns a std::vector<std::string>
 r.zrange<T>("sorted-set", 0, -1) //returns a std::vector<T>
