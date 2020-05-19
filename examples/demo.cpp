@@ -84,9 +84,6 @@ int main(int, char**) {
   std::cout << "SET: " << ctx.set("key1", 123456789) << '\n';
   std::cout << "GET: " << *ctx.get<int>("key1") << '\n';
 
-
-
-
   {
     std::cout << "=== STATIC TRANSACTION ===\n";
     std::vector<char> plop = {'p', 'l', 'o', 'p'};
@@ -100,7 +97,7 @@ int main(int, char**) {
    {
      ctx.set("key3", " 3333 ");
      {
-       std::cout << "=== DYNAMIC PIPELINE ===\n";
+       std::cout << "=== DYNAMIC TRANSACTION ===\n";
        std::string v3;
        auto t = ctx.transaction();
        t
