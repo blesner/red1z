@@ -80,11 +80,11 @@ r[&d].get<int>("key1"); //OK: read the data as an int then ASSIGN it to d
 //OUTPUT ITERATOR VARIANT
 r.lpush("somelist", 11, 12, 13); //store3 ints into a list
 
-std::vector<std::optional<int>> vi;
+std::vector<int> vi;
 auto const n = r[std::back_inserter(vi)].lrange("somelist", 0, -1);
 //n is the number of elements inserted in vi (here 3)
 
-std::vector<std::optional<double>> vd;
+std::vector<double> vd;
 //read elements as ints and store them as double into vd
 r[std::back_inserter(vec)].lrange<int>("somelist", 0, -1);
 
