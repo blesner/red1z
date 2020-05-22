@@ -24,6 +24,9 @@ IMHO **every** project should cleary state their thread-safety properties, so he
 
 **`red1z` is not thread-safe**
 
+
+# Quickstart
+
 ## Building & Installing
 `red1z` uses CMake, juist create a `build` directory run `cmake` from it then run `make` and `make install`.
 Link using `-lred1z`.
@@ -31,13 +34,14 @@ Link using `-lred1z`.
 ## Error Reporting
 `red1z` uses exceptions, and all derive from `red1z::Error` which in turns derives from `std::runtime_error`.
 
-## Quickstart
-Here is a simple exemple of how `red1z` handles input and ouput. The idea is to be able to use any type (under conditions, discussed later) as Redis values **and** keys, and have a strongly typed C++ API on top. In a nutshell, every value returned as a `SimpleString` or `BulkString`, can be interpreted with a type.
+## Usage
 
 The entrypoint of `red1z` is the `red1z::Redis` class, each (except for transactions) redis command has a corresponding method (lowercased) on `red1z::Redis`
 
 You can specify the result type for every command (where relevant) as a template parameter `T` or just use the default of `std::string`.
 If the command may return no value (like `get<T>`) the returned type is `std::optional<T>`.
+
+The idea is to be able to use any type (under conditions, discussed later) as Redis values **and** keys, and have a strongly typed C++ API on top. In a nutshell, every value returned as a `SimpleString` or `BulkString`, can be interpreted with a type.
 
 Commands come in two forms: the *direct* form and the *bound* form:
 ### Direct form
@@ -74,14 +78,15 @@ r[&d].get<int>("key1"); //OK: read the data as an int then ASSIGN it to d
 
 
 //OUTPUT ITERATOR VARIANT
+r.lpush("somelist", 11, 12, 13); //store3 ints into a list
+
 std::vector<std::optional<int>> vi;
-//read key1 and key2 as ints and store them into vi
-auto const n = r[std::back_inserter(vi)].mget("key1", "key2");
-//n is the number of elements written (here 2)
+auto const n = r[std::back_inserter(vi)].lrange("somelist", 0, -1);
+//n is the number of elements inserted in vi (here 3)
 
 std::vector<std::optional<double>> vd;
-//read key1 and key2 as ints and store them as double into vd
-r[std::back_inserter(vec)].mget<int>("key1", "key2");
+//read elements as ints and store them as double into vd
+r[std::back_inserter(vec)].lrange<int>("somelist", 0, -1);
 
 ```
 
