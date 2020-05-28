@@ -86,6 +86,9 @@ namespace red1z {
     {}
 
     static Redis from_url(std::string_view url);
+    static Redis from_url(std::string const& url) {
+      return from_url(std::string_view(url));
+    }
 
     template <class Cmd>
     auto _run(impl::Command<Cmd>&& cmd) {
