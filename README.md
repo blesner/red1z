@@ -47,7 +47,7 @@ Commands come in two forms: the *direct* form and the *bound* form:
 ### Direct form
 In the *direct* form the commands returns directy its value. The direct form accepts an optional type paremeter for the returned value (possibly wrapped in `std::optional`)
 ```c++
-auto r = red1z::Redis::from_url("redis://password@hostname");
+auto r = red1z::Redis::from_url("redis://:password@hostname");
 auto v = r.get("my key"); //v is std::optional<std::string>
 auto i = r.get<int>("key"); //i is std::optional<int>
 
@@ -97,7 +97,7 @@ r[std::back_inserter(vec)].lrange<int>("somelist", 0, -1);
 #include "red1z/red1z.h"
 
 int main(int, char**) {
-  auto r = red1z::Redis::from_url("redis://password@hostname");
+  auto r = red1z::Redis::from_url("redis://:password@hostname");
   r.set("my_key", "value");
   if (auto v = r.get("my_key")) {
     // here v is std::optional<std::string> (the default value type is std::string in red1z)
@@ -185,7 +185,7 @@ When you know exactly at compile-time the commands you want in a transaction the
 
 ```c++
 auto& cmd = red1z::commands; //red1z::command is an object with all redis commands as methods but do not execute anyting.
-auto r = red1z::Redis::from_url("redis://password@hostname");
+auto r = red1z::Redis::from_url("redis://:password@hostname");
 
 //STATIC transaction: notice the use of methods on 'cmd' as arguments:
 int v;

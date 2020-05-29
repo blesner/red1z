@@ -31,7 +31,7 @@ namespace red1z {
   }
 
   Redis Redis::from_url(std::string_view url) {
-    std::regex re("redis://((([^:/ ]+):)?([^@/ ]+)@)?([^@/ :]+)(:([0-9]+))?(/([0-9]{0,2}))?");
+    std::regex re("redis://(([^:/ ]+)?:([^@/ ]+)@)?([^@/ :]+)(:([0-9]+))?(/([0-9]{0,2}))?");
     std::cmatch m;
     if (!regex_match(std::begin(url), std::end(url), m, re)) {
       throw Error("unable to parse redis URL ", url);
@@ -41,20 +41,20 @@ namespace red1z {
     std::optional<std::string> password;
     if (m[1].length()) {
       if (m[2].length()) {
-        username = m[3].str();
+        username = m[2].str();
       }
-      password = m[4].str();
+      password = m[3].str();
     }
 
-    std::string hostname = m[5].str();
+    std::string hostname = m[4].str();
     int port = 6379;
-    if (m[6].length()) {
-      std::from_chars(m[7].first, m[7].second, port);
+    if (m[5].length()) {
+      std::from_chars(m[6].first, m[6].second, port);
     }
 
     int db = 0;
-    if (m[9].length() ) {
-      std::from_chars(m[9].first, m[9].second, db);
+    if (m[8].length() ) {
+      std::from_chars(m[8].first, m[8].second, db);
       if (db >= 16) {
         throw Error("invalid DB index ", db);
       }
