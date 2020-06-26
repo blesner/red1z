@@ -502,11 +502,11 @@ namespace red1z {
       m_data.append(d.data(), d.size());
     }
 
-    // template <class T>
-    // void write(T const* ptr, int n) {
-    //   auto d = impl::view(range(ptr, n));
-    //   m_data.append(d.data(), d.size());
-    // }
+    template <class T>
+    void write(T const* ptr, int n) {
+      auto d = impl::view(range(ptr, n));
+      m_data.append(d.data(), d.size());
+    }
   };
 
   class IoReader {
