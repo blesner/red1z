@@ -274,7 +274,7 @@ Well that's nice, we can use *single* instances of `CutomType` but still none of
 r.get<std::tuple<CustomType, std::string>>("some_key");
 r.get<std::vector<CustomType>>("some-other-key");
 ```
-This is because `red1z` must know, given some amount of bytes retruend by REDIS, how much of them should go to `CustomType` and to `std::string`. The bad news is that if your seralized data size (returned by `io<CustomType>::view()`) varies depending on the object to serialize you're done. But here's the good news: if the serialization always has the same size `N` you can tell that to `red1z`, just by inheriting your `io<CustomType>` specialisation from `item_io<N>` :
+This is because `red1z` must know, given the number of bytes returned by REDIS, how much of them should go to `CustomType` and to `std::string`. The bad news is that if your serialized data size (returned by `io<CustomType>::view()`) varies depending on the object to serialize you're doomed. But here's the good news: if the serialization always has the same size `N` you can tell that to `red1z`, just by inheriting your `io<CustomType>` specialisation from `item_io<N>` :
 
 ```c++
 namespace red1z {
