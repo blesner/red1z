@@ -59,7 +59,7 @@ In the *bound* form the command is given an output parameter. The ouput paremate
 *or* an output iterator. For commands that return a dynamic number of values the output parameter _*must*_ be an output iterator. The general syntax is:
 `r[OUTPUT-PARAM].command(args...);`
 
-Commands that return an `std::optional<T>` in direct form accepts a `T*` in bound form and return a `bool` indication wether the output has benn written to. In bound form the output type paremeter is deduced from the output paremeter. Its still possible to pass an output-type parameter `T`, in this case the stored data will be read from Redis as a `T` instance and then converted to the output paremeter's type. This allows to apply a conversion (for exemple between numeric types, see below).
+Commands that return an `std::optional<T>` in direct form accepts a `T*` in bound form and return a `bool` indicating wether the output has been written to. In bound form the output type paremeter is deduced from the output parameter. Its still possible to pass an output-type parameter `T`, in this case the stored data will be read from Redis as a `T` instance and then converted to the output paremeter's type. This allows to apply a conversion (for exemple between numeric types, see below).
 
 ```c++
 //POINTER VARIANT
