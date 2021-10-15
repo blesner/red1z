@@ -133,10 +133,10 @@ int main(int, char**) {
   }
   //output parameters are sypported with a different syntax:
   int num;
-  r[&num].get("number); //no need to specify the output type, it is automatically deduced
+  r[&num].get("number"); //no need to specify the output type, it is automatically deduced
   //you can also use output iterators:
   std::list<int> lst;
-  if (r[std::front_inserter(lst)].get("number)) {
+  if (r[std::front_inserter(lst)].get("number")) {
     //a value has been inserted
   }
   else {
