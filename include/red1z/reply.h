@@ -5,38 +5,44 @@
 #include "red1z/io.h"
 
 #include <memory>
-#include <tuple>
-#include <vector>
-#include <string>
 #include <optional>
+#include <string>
+#include <tuple>
 #include <variant>
+#include <vector>
 
 namespace red1z {
   class Reply;
 
   namespace impl {
     class Socket;
-    using Rep = std::variant<std::nullopt_t, std::int64_t, std::string, std::vector<Reply>>;
-    Rep read_reply(red1z::impl::Socket& sock);
-  }
+    using Rep = std::variant<std::nullopt_t, std::int64_t, std::string,
+                             std::vector<Reply>>;
+    Rep read_reply(red1z::impl::Socket &sock);
+  } // namespace impl
 
   class Reply {
     impl::Rep m_impl;
+
   public:
-    Reply(impl::Socket& sock) : m_impl(read_reply(sock)) {}
+    Reply(impl::Socket &sock) : m_impl(read_reply(sock)) {}
 
-    Reply(Reply const&) = delete;
-    Reply(Reply&&) = default;
-    Reply& operator=(Reply const&) = delete;
-    Reply& operator=(Reply&&) = default;
+    Reply(Reply const &) = delete;
+    Reply(Reply &&) = default;
+    Reply &operator=(Reply const &) = delete;
+    Reply &operator=(Reply &&) = default;
 
-    explicit operator bool () const {
+    explicit operator bool() const {
       return m_impl.index() != 0;
     }
 
-    std::vector<Reply> array() && {
+    std::vector<Reply> array(std::int64_t expected_size = -1) && {
       if (auto p = std::get_if<std::vector<Reply>>(&m_impl)) {
-         return std::move(*p);
+        if (expected_size >= 0 &&
+            static_cast<std::int64_t>(p->size()) != expected_size) {
+          throw Error("unexpected array size");
+        }
+        return std::move(*p);
       }
       throw Error("cannot access array data");
     }
@@ -62,8 +68,7 @@ namespace red1z {
       throw Error("cannot access floating point data");
     }
 
-    template <class T>
-    T get() && {
+    template <class T> T get() && {
       return io<T>::read(std::move(*this).string());
     }
 
@@ -85,6 +90,6 @@ namespace red1z {
     }
   };
 
-}
+} // namespace red1z
 
 #endif

@@ -1,7 +1,6 @@
 // -*- C++ -*-
 #ifndef RED1Z_CONTEXT_H
 #define RED1Z_CONTEXT_H
-
 #include "red1z/command.h"
 #include "red1z/socket.h"
 
@@ -10,11 +9,12 @@ namespace red1z {
     class Context;
 
     class CommandQueue {
-      Context* m_ctx;
-    public:
-      CommandQueue(Context* ctx) : m_ctx(ctx) {}
+      Context *m_ctx;
 
-      inline int append(std::string&& cmd);
+    public:
+      CommandQueue(Context *ctx) : m_ctx(ctx) {}
+
+      inline int append(std::string &&cmd);
       inline void discard(int count);
       inline void discard();
       inline Reply get_reply();
@@ -26,16 +26,17 @@ namespace red1z {
       int m_in_flight = 0;
       std::vector<std::string> m_queue;
       friend class CommandQueue;
+
     public:
-      Context(std::string const& host, int port) :
-        m_sock(host, port)
-      { }
+      Context(std::string const &host, int port) : m_sock(host, port) {}
 
       int in_flight() const {
         return m_in_flight;
       }
 
-      bool ready() const { return m_in_flight == 0; }
+      bool ready() const {
+        return m_in_flight == 0;
+      }
 
       Reply get_reply() {
         if (m_in_flight == 0) {
@@ -57,7 +58,7 @@ namespace red1z {
         return std::nullopt;
       }
 
-      Reply execute(std::string&& cmd) {
+      Reply execute(std::string &&cmd) {
         if (not ready()) {
           throw Error("cannot execute command: requests are pending");
         }
@@ -65,26 +66,25 @@ namespace red1z {
         return get_reply();
       };
 
-      template <class... Args>
-      Reply run(Args const&... cmd) {
+      template <class... Args> Reply run(Args const &... cmd) {
         return execute(encode_command(cmd...));
       }
 
-      template <class... Args>
-      void pubsub_run(Args const&... cmd) {
+      template <class... Args> void pubsub_run(Args const &... cmd) {
         auto c = encode_command(cmd...);
         m_sock.write(c.data(), c.size());
       }
 
       CommandQueue start_pipeline() {
         if (not ready()) {
-          throw Error("cannot start pipeline: ", m_in_flight, " requests are pending");
+          throw Error("cannot start pipeline: ", m_in_flight,
+                      " requests are pending");
         }
         return {this};
       }
 
     private:
-      int append(std::string&& cmd) {
+      int append(std::string &&cmd) {
         m_queue.emplace_back(std::move(cmd));
         return ++m_in_flight;
       }
@@ -99,14 +99,14 @@ namespace red1z {
       }
     };
 
-
-    int CommandQueue::append(std::string&& cmd) {
+    int CommandQueue::append(std::string &&cmd) {
       return m_ctx->append(std::move(cmd));
     }
 
     void CommandQueue::discard(int count) {
       if (int n = m_ctx->in_flight(); n < count) {
-        throw Error("cannot discard ", count, " replies: there are only ", n, " requests in flight");
+        throw Error("cannot discard ", count, " replies: there are only ", n,
+                    " requests in flight");
       }
       for (int i = 0; i < count; ++i) {
         m_ctx->discard_reply();
@@ -123,7 +123,7 @@ namespace red1z {
     CommandQueue::~CommandQueue() {
       discard();
     }
-  }
-}
+  } // namespace impl
+} // namespace red1z
 
 #endif

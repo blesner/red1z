@@ -16,8 +16,10 @@ add_library(red1z ${SRC}/reply.cpp ${SRC}/socket.cpp ${SRC}/redis.cpp)
 
 
 add_executable(demo examples/demo.cpp)
+add_executable(stream examples/stream.cpp)
 
-target_link_libraries(demo red1z)
+target_link_libraries(demo red1z pthread)
+target_link_libraries(stream red1z)
 
 install(TARGETS red1z
   LIBRARY DESTINATION lib
