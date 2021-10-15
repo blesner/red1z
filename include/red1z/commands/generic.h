@@ -14,7 +14,7 @@ namespace red1z {
                  sig::signature<sig::arg<sig::_int>, sig::flag<flags::_match>,
                                 sig::flag<flags::_count>,
                                 sig::flag<flags::_type>>(),
-                 std::to_string(cursor), flags...) {}
+                 cursor, flags...) {}
 
       static std::tuple<std::uint64_t, std::vector<T>> process(Reply &&r) {
         std::vector<T> out;
