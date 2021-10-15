@@ -22,7 +22,7 @@ Most of REDIS 5 commands are supported expect for some informational commands, `
 ## Thread Safety
 IMHO **every** project should cleary state their thread-safety properties, so here you are:
 
-**`red1z` is not thread-safe**
+An instance of  `red1z::Redis` cannot be used between different threads. Use one instance per thread and you'll be OK ;)
 
 
 # Quickstart
