@@ -5,6 +5,7 @@
 #include "error.h"
 
 #include <array>
+#include <cstdint>
 #include <deque>
 #include <forward_list>
 #include <list>
@@ -246,7 +247,7 @@ namespace red1z {
       }
       int const n = nbytes / N;
 
-      return Derived::read_generic<N>(n, v);
+      return Derived::template read_generic<N>(n, v);
     }
 
     static C read(std::string_view v, std::true_type /* trivial_io */) {
